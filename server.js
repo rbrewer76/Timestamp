@@ -24,24 +24,18 @@ app.get("/api/hello", (req, res) => {
   res.json({greeting: "hello API"})
 })
 
-
-app.get("/api/timestamp", (req, res) => {
-  const date = new Date()
-  res.json({"unix": date.getTime(), "utc" : date.toUTCString() })  
-})
-
-
-app.get("/api/timestamp/:date_string", (req, res) => {
+app.get("/api/timestamp/:date_string?", (req, res) => {
   const dateString = req.params.date_string
-  let date = ""
+  // default date is current date if no paramater is passed
+  let date = new Date()
   
   // The numbers passed from html are a --String--. Date expects a --Number-- of milliseconds
   if (!isNaN(Number(dateString))) 
     date = new Date(Number(dateString))
-  // The string is not a Number so try and make a date with it
-  else 
-    date = new Date(dateString)  
-
+  // If there is a string and it is not a Number, try and make a date with it
+  else if (dateString !== undefined) 
+    date = new Date(dateString)
+  
   // If there is a valid Date object
   if (date instanceof Date && !isNaN(date.valueOf())) 
     res.json({"unix": date.getTime(), "utc" : date.toUTCString() })
